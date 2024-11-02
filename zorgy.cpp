@@ -16,8 +16,6 @@ class Item{
             calories = c;
             weight = w;
             description = d;
-            //std::cout << name << " (" << calories << " calories) - " << weight << " lb - " << description << "\n\n";
-
         }
 
     private:
@@ -38,14 +36,6 @@ class NPC{
             description = d;
             message_number = m_n;
             messages = m;
-            //std::cout << "I am a " << name << " (" << description << ") - Message Number " << message_number << " has to tell you: ";
-
-            //int tmp = 0;
-            //while (tmp < messages.size()){
-                //std::cout << " " << messages[tmp]; tmp++;}
-
-            //std::cout  << " \n\n";
-
         }
 
     private:
@@ -68,7 +58,9 @@ class Location{
             visited = v; 
             room_npcs = N;
             room_items = I;
-            
+
+        }
+        void print_room(){
             std::cout <<  name << " - " << description << "\n\n";
 
             std::cout << "You see the following NPCS:\n\t";
@@ -82,11 +74,7 @@ class Location{
             tmp = 0;
             while (tmp < room_items.size()){
                 std::cout << "- " << room_items[tmp].name << "\n\t"; tmp++;}
-
-        }
-        void print_room(){
-            
-
+            std::cout << "\n";
         }
 
     private:
@@ -115,5 +103,6 @@ int main(){
     NPC gaurdian("Gaurdian", "I will try my hardest to stop you", 1, {"Get out of here!", "I don't want to hurt you."});
     NPC slayer("Slayer", "I kill", 1, {"You die!", "I want to hurt you."});
     Location bedroom("The Bedroom", "Many die here.", true, {gaurdian, slayer}, {sword, stick});
+    bedroom.print_room();
     return 0;
 }
