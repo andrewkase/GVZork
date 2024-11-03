@@ -182,12 +182,49 @@ public:
     }
 
     void create_world() {
-        Item sword("Sword", 0, 5.3, "It cuts things up good");
-        Item stick("Stick", 0, 1.0, "It hits real good");
-        NPC guardian("Guardian", "I will try my hardest to stop you", 1, {"Get out of here!", "I don't want to hurt you."});
-        NPC slayer("Slayer", "I kill", 1, {"You die!", "I want to hurt you."});
-        Location bedroom("The Bedroom", "Many die here.", true, {guardian, slayer}, {sword, stick});
-        all_locations.push_back(bedroom);
+        //Created Items
+        Item chinese("Chinese Food", 50, 5.3, "Muy delicioso! Oops wrong food.");
+        Item sandwich("Sandwich", 40, 3.0, "It's unfortunately not a footlong.");
+        Item bagel("Bagel", 20, 2.0, "They respect the shmear.");
+        Item coffee("Coffee", 60, 15.0, "Contains mostly sugar.");
+        Item burrito("Burrito", 40, 7.3, "Muy delicioso!");
+        Item pasta("Pasta", 50, 7.0, "So noodly, my favorite.");
+        Item burger("Burger", 70, 15.0, "Not very good, but it's food.");
+        Item snacks("Snacks", 40, 5.0, "Some say empty calories, I say tasty.");
+        Item breakfast("Breakfast", 50, 5.3, "Pancakes galore.");
+        Item desert("Desert", 40, 3.0, "Oooh, ice cream, fits so nice in my pockets.");
+
+        //Created NPCs
+        NPC ira("Ira Woodring", "The guider of knowledge.", 1, {"You must feed the elf!", "Find food around campus!"});
+        NPC lunch_lady("Lunch Lady", "The giver of foods.", 1, {"You look hungry!", "I hope you have meal swipes left!"});
+        NPC friend_from_highschool("Friend From Highschool", "You do not want to talk to them.", 1, {"It's been a while!", "We should hang out sometime!"});
+        NPC dean("The Dean of Computing", "Spreads fear among the land", 1, {"What is your name?", "Try out our new majors next year!"});
+        NPC fellow_students("Fellow Students", "You only talk to them if you are in class.", 1, {".....", "....hm...."});
+
+        //Created Locations
+        Location kirkhof("Kirkhof Center", "We have food.", true, {lunch_lady, fellow_students, friend_from_highschool}, {chinese, coffee, sandwich, burrito, pasta, burger});
+        all_locations.push_back(kirkhof);
+
+        Location mackinac("Mackinac Hall", "Your computer science hub.", true, {ira, fellow_students}, {coffee, snacks});
+        all_locations.push_back(mackinac);
+
+        Location blue_connection("Blue Connection", "We have food.", true, {lunch_lady, fellow_students}, {sandwich, burger, desert});
+        all_locations.push_back(blue_connection);
+
+        Location kleiner("Kleiner", "Home of the Dish.", true, {lunch_lady, fellow_students}, {sandwich, breakfast, desert, pasta});
+        all_locations.push_back(kleiner);
+
+        Location holton_hooker("Holton-Hooker", "Home of Einstein Bros. Bagels.", true, {lunch_lady}, {bagel, coffee, breakfast});
+        all_locations.push_back(holton_hooker);
+
+        Location marketplace("Marketplace", "Home of Bento.", true, {fellow_students}, {chinese, coffee});
+        all_locations.push_back(marketplace);
+
+        Location commons("Commons", "Home of Fresh Food co.", true, {lunch_lady}, {sandwich, breakfast, desert, bagel});
+        all_locations.push_back(commons);
+
+        Location library("Library", "Home of GV Brew.", true, {fellow_students}, {coffee, snacks});
+        all_locations.push_back(library);
     }
 
     Location random_location() {
