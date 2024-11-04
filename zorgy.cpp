@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <map>
 #include <cstdlib> // for rand()
 #include <ctime> // for time()
 
@@ -195,11 +197,11 @@ public:
         Item desert("Desert", 40, 3.0, "Oooh, ice cream, fits so nice in my pockets.");
 
         //Created NPCs
-        NPC ira("Ira Woodring", "The guider of knowledge.", 1, {"You must feed the elf!", "Find food around campus!"});
-        NPC lunch_lady("Lunch Lady", "The giver of foods.", 1, {"You look hungry!", "I hope you have meal swipes left!"});
-        NPC friend_from_highschool("Friend From Highschool", "You do not want to talk to them.", 1, {"It's been a while!", "We should hang out sometime!"});
-        NPC dean("The Dean of Computing", "Spreads fear among the land", 1, {"What is your name?", "Try out our new majors next year!"});
-        NPC fellow_students("Fellow Students", "You only talk to them if you are in class.", 1, {".....", "....hm...."});
+        NPC ira("Ira Woodring", "The guider of knowledge.", 0, {"You must feed the elf!", "Find food around campus!"});
+        NPC lunch_lady("Lunch Lady", "The giver of foods.", 0, {"You look hungry!", "I hope you have meal swipes left!"});
+        NPC friend_from_highschool("Friend From Highschool", "You do not want to talk to them.", 0, {"It's been a while!", "We should hang out sometime!"});
+        NPC dean("The Dean of Computing", "Spreads fear among the land", 0, {"What is your name?", "Try out our new majors next year!"});
+        NPC fellow_students("Fellow Students", "You only talk to them if you are in class.", 0, {".....", "....hm...."});
 
         //Created Locations
         Location kirkhof("Kirkhof Center", "We have food.", true, {lunch_lady, fellow_students, friend_from_highschool}, {chinese, coffee, sandwich, burrito, pasta, burger});
@@ -233,6 +235,10 @@ public:
     }
 
     // Getters
+    std::map<std::string, std::vector<std::string>> get_commands(){
+        return commands;
+    }
+
     float get_player_weight() const {
         return player_weight;
     }
@@ -254,6 +260,9 @@ public:
     }
 
     // Setters
+    void set_command(std::map<std::string, std::vector<std::string>>& c){
+        commands = c;
+    }
     void set_player_weight(float w) {
         player_weight = w;
     }
@@ -274,7 +283,9 @@ public:
         game_status = b;
     }
 
+
 private:
+    std::map<std::string, std::vector<std::string>> commands;
     float player_weight;
     std::vector<Location> all_locations;
     std::vector<Item> player_items;
@@ -283,9 +294,60 @@ private:
     bool game_status;
 };
 
+class Input{
+    public:
+        std::string command_input;
+        Input (){
+            command_input = "";
+        }
+
+        std::vector<std::string> split(){
+            std::string command_input_2;
+            std::string first;
+            std::vector<std::string> rest_of_input;
+            int word_count = 0;
+            getline(std::cin, command_input);
+            for (int i = 0; i < command_input.length(); i++) { 
+    
+            if (command_input[i] != ' '){
+                if (word_count == 0){
+                    first += command_input[i];
+                }
+                command_input_2 += command_input[i];
+            }
+            if (command_input[i] == ' ' || i == command_input.length()-1){
+                if (word_count != 0){
+                    rest_of_input.push_back(command_input_2);
+                }
+                word_count += 1;
+                command_input_2 = "";
+            }
+            }
+            std::cout << "\n" << first << "\n";
+            for (int i = 0; i < rest_of_input.size(); i++){
+                std::cout << rest_of_input[i] << " ";
+            }
+            std::cout << "\n\n";
+            word_count = 0;
+            first = "";
+            return rest_of_input;
+        
+    }
+
+    private:
+
+};
+
 int main() {
     srand(time(0)); // Seed the random number generator
     Game gamer;
+    std::vector<std::string> tokens;
+    Input user_response;
+    
+    while (gamer.get_game_status() == true){
+        tokens = user_response.split();
+    }
     gamer.get_current_location().print_room();
+    
     return 0;
 }
