@@ -301,7 +301,7 @@ class Input{
             command_input = "";
         }
 
-        std::vector<std::string> split(){
+        std::vector<std::string> split(int i){
             std::string command_input_2;
             std::string first;
             std::vector<std::string> rest_of_input;
@@ -328,10 +328,13 @@ class Input{
                 std::cout << rest_of_input[i] << " ";
             }
             std::cout << "\n\n";
-            word_count = 0;
-            first = "";
-            return rest_of_input;
-        
+            if (i == 1){
+                return {first};
+            }
+            else if (i == 2){
+                return rest_of_input;
+            }
+            return {};
     }
 
     private:
@@ -342,11 +345,15 @@ int main() {
     srand(time(0)); // Seed the random number generator
     Game gamer;
     std::vector<std::string> tokens;
+    std::string command;
     Input user_response;
-    
+
+    /*
     while (gamer.get_game_status() == true){
-        tokens = user_response.split();
+        command = user_response.split(1)[0];
+        tokens = user_response.split(2);
     }
+    */
     gamer.get_current_location().print_room();
     
     return 0;
