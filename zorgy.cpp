@@ -298,7 +298,6 @@ class Input{
     public:
         std::string command_input;
         Input (){
-            command_input = "";
         }
 
         std::vector<std::string> split(int i){
@@ -306,7 +305,10 @@ class Input{
             std::string first;
             std::vector<std::string> rest_of_input;
             int word_count = 0;
-            getline(std::cin, command_input);
+            if (i == 1){
+                getline(std::cin, command_input);
+            }
+            
             for (int i = 0; i < command_input.length(); i++) { 
     
             if (command_input[i] != ' '){
@@ -323,11 +325,6 @@ class Input{
                 command_input_2 = "";
             }
             }
-            std::cout << "\n" << first << "\n";
-            for (int i = 0; i < rest_of_input.size(); i++){
-                std::cout << rest_of_input[i] << " ";
-            }
-            std::cout << "\n\n";
             if (i == 1){
                 return {first};
             }
@@ -348,12 +345,24 @@ int main() {
     std::string command;
     Input user_response;
 
-    /*
+    
     while (gamer.get_game_status() == true){
         command = user_response.split(1)[0];
         tokens = user_response.split(2);
+       
+       
+        if(command == "break" || command == "Break"){
+            gamer.set_game_status(false);
+            break;
+        }
+        for (auto it : tokens) { 
+        // Print the values 
+        if (it == "break" || it == "Break"){
+            gamer.set_game_status(false);
+        } 
     }
-    */
+    }
+    
     gamer.get_current_location().print_room();
     
     return 0;
