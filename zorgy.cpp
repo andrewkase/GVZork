@@ -4,6 +4,51 @@
 #include <map>
 #include <cstdlib> // for rand()
 #include <ctime> // for time()
+#include <functional>
+
+class Input{
+    public:
+        std::string command_input;
+        Input (){
+        }
+
+        std::vector<std::string> split(int i){
+            std::string command_input_2;
+            std::string first;
+            std::vector<std::string> rest_of_input;
+            int word_count = 0;
+            if (i == 1){
+                getline(std::cin, command_input);
+            }
+            
+            for (int i = 0; i < command_input.length(); i++) { 
+    
+            if (command_input[i] != ' '){
+                if (word_count == 0){
+                    first += command_input[i];
+                }
+                command_input_2 += command_input[i];
+            }
+            if (command_input[i] == ' ' || i == command_input.length()-1){
+                if (word_count != 0){
+                    rest_of_input.push_back(command_input_2);
+                }
+                word_count += 1;
+                command_input_2 = "";
+            }
+            }
+            if (i == 1){
+                return {first};
+            }
+            else if (i == 2){
+                return rest_of_input;
+            }
+            return {};
+    }
+
+    private:
+
+};
 
 class Item {
 public:
@@ -175,12 +220,51 @@ private:
 
 class Game {
 public:
+    
+    //std::map<std::string, std::function<void(*)(std::vector<std::string>)>> commands;
+    std::map<std::string, std::function<void(std::vector<std::string>)>> commands;
     Game() {
         create_world();
         player_weight = 0.0;
         current_location = random_location();
         calories_left = 500;
         game_status = true;
+        setup_commands();
+    }
+    
+    static void show_help(std::vector<std::string> tokens){
+        std::cout << "You needed help?\n\n";
+    }
+
+    static void pick_up(std::vector<std::string> tokens){
+        if (tokens.empty()){
+            std::cout << "What will you pick up?\n\n";
+        }
+        else{
+            std::cout << "You picked up: ";
+            for (auto it : tokens){
+                std::cout << it << ". ";
+            }
+            std::cout << "\n\n";
+            
+        }
+    }
+
+    static void talk(std::vector<std::string> tokens){
+        if (tokens.empty()){
+            std::cout << "Who will you talk to?\n\n";
+        }
+        else{
+            std::cout << "You talked to someone!\n\n";
+        }   
+    }
+
+    void setup_commands(){
+        commands["help"] = show_help;
+        commands["take"] = pick_up;
+        commands["grab"] = pick_up;
+        commands["talk"] = talk;
+        commands["speak"] = talk;
     }
 
     void create_world() {
@@ -235,9 +319,9 @@ public:
     }
 
     // Getters
-    std::map<std::string, std::vector<std::string>> get_commands(){
+    /*std::map<std::string, std::vector<std::string>> get_commands(){
         return commands;
-    }
+    }*/
 
     float get_player_weight() const {
         return player_weight;
@@ -260,9 +344,9 @@ public:
     }
 
     // Setters
-    void set_command(std::map<std::string, std::vector<std::string>>& c){
+    /*void set_command(std::map<std::string, std::vector<std::string>>& c){
         commands = c;
-    }
+    }*/
     void set_player_weight(float w) {
         player_weight = w;
     }
@@ -283,9 +367,8 @@ public:
         game_status = b;
     }
 
-
 private:
-    std::map<std::string, std::vector<std::string>> commands;
+    //std::map<std::string, std::vector<std::string>> commands;
     float player_weight;
     std::vector<Location> all_locations;
     std::vector<Item> player_items;
@@ -294,49 +377,7 @@ private:
     bool game_status;
 };
 
-class Input{
-    public:
-        std::string command_input;
-        Input (){
-        }
 
-        std::vector<std::string> split(int i){
-            std::string command_input_2;
-            std::string first;
-            std::vector<std::string> rest_of_input;
-            int word_count = 0;
-            if (i == 1){
-                getline(std::cin, command_input);
-            }
-            
-            for (int i = 0; i < command_input.length(); i++) { 
-    
-            if (command_input[i] != ' '){
-                if (word_count == 0){
-                    first += command_input[i];
-                }
-                command_input_2 += command_input[i];
-            }
-            if (command_input[i] == ' ' || i == command_input.length()-1){
-                if (word_count != 0){
-                    rest_of_input.push_back(command_input_2);
-                }
-                word_count += 1;
-                command_input_2 = "";
-            }
-            }
-            if (i == 1){
-                return {first};
-            }
-            else if (i == 2){
-                return rest_of_input;
-            }
-            return {};
-    }
-
-    private:
-
-};
 
 int main() {
     srand(time(0)); // Seed the random number generator
@@ -349,21 +390,19 @@ int main() {
     while (gamer.get_game_status() == true){
         command = user_response.split(1)[0];
         tokens = user_response.split(2);
-       
-       
-        if(command == "break" || command == "Break"){
-            gamer.set_game_status(false);
-            break;
+        if (gamer.commands.find(command) != gamer.commands.end()) {
+            gamer.commands[command](tokens);
         }
-        for (auto it : tokens) { 
-        // Print the values 
-        if (it == "break" || it == "Break"){
-            gamer.set_game_status(false);
-        } 
-    }
+        else{
+            std::cout << "Please enter a valid command!\n\n";
+        }
+
+        //gamer.get_current_location().print_room();
+        
+    
     }
     
-    gamer.get_current_location().print_room();
+    
     
     return 0;
 }
