@@ -189,6 +189,10 @@ public:
         room_items = I;
     }
 
+    void remove_room_item(int i){
+        room_items.erase(room_items.begin() + i);
+    }
+
     void print_room() const {
         std::cout << name << " - " << description << "\n\n";
 
@@ -236,19 +240,42 @@ public:
         std::cout << "You needed help?\n\n";
     }
 
-    static void pick_up(std::vector<std::string> tokens){
+    void pick_up(std::vector<std::string> tokens){
         if (tokens.empty()){
             std::cout << "What will you pick up?\n\n";
         }
         else{
-            std::cout << "You picked up: ";
-            for (auto it : tokens){
-                std::cout << it << ". ";
+            //std::cout << "You picked up: ";
+            for (auto word : tokens){
+                int temp = 0;
+                for (auto item : current_location.get_room_items()){
+                    temp += 1;
+                    if (item.get_name() == word) {
+
+                        player_items.push_back(item);
+                        std::cout << "You picked up " << item.get_name() << "!\n\n";
+                        current_location.remove_room_item(temp-1);
+                    } 
+                }
             }
-            std::cout << "\n\n";
-            
         }
     }
+
+    void room(std::vector<std::string> tokens){
+        current_location.print_room();
+
+    }
+
+    void items(std::vector<std::string> tokens){
+            std::cout << "All items: ";
+            for (auto item : player_items){
+                    std::cout << item.get_name() << " ";
+
+        }
+            std::cout << "\n\n";
+    }
+    
+    
 
     static void talk(std::vector<std::string> tokens){
         if (tokens.empty()){
@@ -261,15 +288,17 @@ public:
 
     void setup_commands(){
         commands["help"] = show_help;
-        commands["take"] = pick_up;
-        commands["grab"] = pick_up;
+        commands["take"] = [this](std::vector<std::string> tokens) { this->pick_up(tokens); };
+        commands["grab"] = [this](std::vector<std::string> tokens) { this->pick_up(tokens); };
         commands["talk"] = talk;
         commands["speak"] = talk;
+        commands["room"] = [this](std::vector<std::string> tokens) { this->room(tokens); };
+        commands["items"] = [this](std::vector<std::string> tokens) { this->items(tokens); };
     }
 
     void create_world() {
         //Created Items
-        Item chinese("Chinese Food", 50, 5.3, "Muy delicioso! Oops wrong food.");
+        Item chinese("Chinese", 50, 5.3, "Muy delicioso! Oops wrong food.");
         Item sandwich("Sandwich", 40, 3.0, "It's unfortunately not a footlong.");
         Item bagel("Bagel", 20, 2.0, "They respect the shmear.");
         Item coffee("Coffee", 60, 15.0, "Contains mostly sugar.");
@@ -396,8 +425,6 @@ int main() {
         else{
             std::cout << "Please enter a valid command!\n\n";
         }
-
-        //gamer.get_current_location().print_room();
         
     
     }
