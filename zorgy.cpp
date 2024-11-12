@@ -277,21 +277,39 @@ public:
     
     
 
-    static void talk(std::vector<std::string> tokens){
+    /*static void talk(std::vector<std::string> tokens){
         if (tokens.empty()){
             std::cout << "Who will you talk to?\n\n";
         }
         else{
             std::cout << "You talked to someone!\n\n";
         }   
+    }*/
+
+    void talk(std::vector<std::string> tokens){
+        if (tokens.empty()){
+            std::cout << "Who will you talk to?\n\n";
+        }
+        else{
+            for (auto word : tokens){
+                int temp = 0;
+                for (auto npc : current_location.get_room_npcs()){
+                    temp += 1;
+                    if (npc.get_name() == word) {
+                        std::cout << npc.get_messages()[npc.get_message_number()] << "!\n\n";
+                        npc.set_message_number(npc.get_message_number() + 1);
+                    }
+                }
+            }
+        }
     }
 
     void setup_commands(){
         commands["help"] = show_help;
         commands["take"] = [this](std::vector<std::string> tokens) { this->pick_up(tokens); };
         commands["grab"] = [this](std::vector<std::string> tokens) { this->pick_up(tokens); };
-        commands["talk"] = talk;
-        commands["speak"] = talk;
+        commands["talk"] = [this](std::vector<std::string> tokens) { this->talk(tokens); };
+        commands["speak"] = [this](std::vector<std::string> tokens) { this->talk(tokens); };
         commands["room"] = [this](std::vector<std::string> tokens) { this->room(tokens); };
         commands["items"] = [this](std::vector<std::string> tokens) { this->items(tokens); };
     }
@@ -310,11 +328,11 @@ public:
         Item desert("Desert", 40, 3.0, "Oooh, ice cream, fits so nice in my pockets.");
 
         //Created NPCs
-        NPC ira("Ira Woodring", "The guider of knowledge.", 0, {"You must feed the elf!", "Find food around campus!"});
-        NPC lunch_lady("Lunch Lady", "The giver of foods.", 0, {"You look hungry!", "I hope you have meal swipes left!"});
-        NPC friend_from_highschool("Friend From Highschool", "You do not want to talk to them.", 0, {"It's been a while!", "We should hang out sometime!"});
-        NPC dean("The Dean of Computing", "Spreads fear among the land", 0, {"What is your name?", "Try out our new majors next year!"});
-        NPC fellow_students("Fellow Students", "You only talk to them if you are in class.", 0, {".....", "....hm...."});
+        NPC ira("Ira_Woodring", "The guider of knowledge.", 0, {"You must feed the elf!", "Find food around campus!"});
+        NPC lunch_lady("Lunch_Lady", "The giver of foods.", 0, {"You look hungry!", "I hope you have meal swipes left!"});
+        NPC friend_from_highschool("Friend_From_Highschool", "You do not want to talk to them.", 0, {"It's been a while!", "We should hang out sometime!"});
+        NPC dean("The_Dean", "Spreads fear among the land", 0, {"What is your name?", "Try out our new majors next year!"});
+        NPC fellow_students("Fellow_Students", "You only talk to them if you are in class.", 0, {".....", "....hm...."});
 
         //Created Locations
         Location kirkhof("Kirkhof Center", "We have food.", true, {lunch_lady, fellow_students, friend_from_highschool}, {chinese, coffee, sandwich, burrito, pasta, burger});
@@ -376,6 +394,7 @@ public:
     /*void set_command(std::map<std::string, std::vector<std::string>>& c){
         commands = c;
     }*/
+
     void set_player_weight(float w) {
         player_weight = w;
     }
@@ -428,8 +447,6 @@ int main() {
         
     
     }
-    
-    
     
     return 0;
 }
