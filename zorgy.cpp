@@ -74,19 +74,50 @@ public:
 
     // Setters
     void set_name(const std::string& n) {
-        name = n;
+        try {
+            if (n == "") {
+                throw std::invalid_argument("Name cannot be blank!");
+            }
+            name = n;
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
     }
 
     void set_calories(int c) {
-        calories = c;
+        try {
+
+            //need to figure out how to check for type still
+
+            if (c < 0 || c > 1000) {
+                throw std::invalid_argument("Calories must be in range 0-1000!");
+            }
+            calories = c;
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
     }
 
     void set_weight(float w) {
-        weight = w;
+        try {
+            if (w < 0 || w > 500) {
+                throw std::invalid_argument("Weight must be in range 0-500!");
+            }
+            weight = w;
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
     }
 
     void set_description(const std::string& d) {
-        description = d;
+        try {
+            if (d == "") {
+                throw std::invalid_argument("Description cannot be blank!");
+            }
+            description = d;
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
     }
 
 private:
