@@ -113,131 +113,122 @@ void Item::set_description(const std::string& d) {
     }
 }
 
-class NPC {
-public:
-    NPC(std::string n = "", std::string d = "", int m_n = 0, std::vector<std::string> m = {})
-        : name(n), description(d), message_number(m_n), messages(m) {}
 
-    // Getters
-    std::string get_name() const {
-        return name;
+
+
+
+NPC::NPC(std::string n, std::string d, int m_n, std::vector<std::string> m)
+    : name(n), description(d), message_number(m_n), messages(m) {}
+
+// Getters
+std::string NPC::get_name() const {
+    return name;
+}
+
+std::string NPC::get_description() const {
+    return description;
+}
+
+int NPC::get_message_number() const {
+    return message_number;
+}
+
+std::vector<std::string> NPC::get_messages() const {
+    return messages;
+}
+
+// Setters
+void NPC::set_name(const std::string& n) {
+    name = n;
+}
+
+void NPC::set_description(const std::string& d) {
+    description = d;
+}
+
+void NPC::set_message_number(int m_n) {
+    message_number = m_n;
+}
+
+void NPC::set_messages(const std::vector<std::string>& m) {
+    messages = m;
+}
+
+
+
+
+
+Location::Location(std::string n, std::string d, bool v, std::vector<NPC> N, std::vector<Item> I)
+    : name(n), description(d), visited(v), room_npcs(N), room_items(I) {}
+
+// Getters
+std::string Location::get_name() const {
+    return name;
+}
+
+std::string Location::get_description() const {
+    return description;
+}
+
+bool Location::is_visited() const {
+    return visited;
+}
+
+std::vector<NPC> Location::get_room_npcs() const {
+    return room_npcs;
+}
+
+std::vector<Item> Location::get_room_items() const {
+    return room_items;
+}
+
+// Setters
+void Location::set_name(const std::string& n) {
+    name = n;
+}
+
+void Location::set_description(const std::string& d) {
+    description = d;
+}
+
+void Location::set_visited(bool v) {
+    visited = v;
+}
+
+void Location::set_room_npcs(const std::vector<NPC>& N) {
+    room_npcs = N;
+}
+
+void Location::set_room_items(const std::vector<Item>& I) {
+    room_items = I;
+}
+
+void Location::remove_room_item(int i){
+    room_items.erase(room_items.begin() + i);
+}
+
+void Location::print_room() const {
+    std::cout << name << " - " << description << "\n\n";
+
+    std::cout << "You see the following NPCS:\n\t";
+
+    int tmp = 0;
+    while (tmp < room_npcs.size()) {
+        std::cout << "- " << room_npcs[tmp].get_name() << "\n\t";
+        tmp++;
     }
+    std::cout << "\n";
 
-    std::string get_description() const {
-        return description;
+    std::cout << "You see the following items:\n\t";
+    tmp = 0;
+    while (tmp < room_items.size()) {
+        std::cout << "- " << room_items[tmp].get_name() << "\n\t";
+        tmp++;
     }
+    std::cout << "\n";
+}
 
-    int get_message_number() const {
-        return message_number;
-    }
 
-    std::vector<std::string> get_messages() const {
-        return messages;
-    }
-
-    // Setters
-    void set_name(const std::string& n) {
-        name = n;
-    }
-
-    void set_description(const std::string& d) {
-        description = d;
-    }
-
-    void set_message_number(int m_n) {
-        message_number = m_n;
-    }
-
-    void set_messages(const std::vector<std::string>& m) {
-        messages = m;
-    }
-
-private:
-    std::string name;
-    std::string description;
-    int message_number;
-    std::vector<std::string> messages;
-};
-
-class Location {
-public:
-    Location(std::string n = "", std::string d = "", bool v = false, std::vector<NPC> N = {}, std::vector<Item> I = {})
-        : name(n), description(d), visited(v), room_npcs(N), room_items(I) {}
-
-    // Getters
-    std::string get_name() const {
-        return name;
-    }
-
-    std::string get_description() const {
-        return description;
-    }
-
-    bool is_visited() const {
-        return visited;
-    }
-
-    std::vector<NPC> get_room_npcs() const {
-        return room_npcs;
-    }
-
-    std::vector<Item> get_room_items() const {
-        return room_items;
-    }
-
-    // Setters
-    void set_name(const std::string& n) {
-        name = n;
-    }
-
-    void set_description(const std::string& d) {
-        description = d;
-    }
-
-    void set_visited(bool v) {
-        visited = v;
-    }
-
-    void set_room_npcs(const std::vector<NPC>& N) {
-        room_npcs = N;
-    }
-
-    void set_room_items(const std::vector<Item>& I) {
-        room_items = I;
-    }
-
-    void remove_room_item(int i){
-        room_items.erase(room_items.begin() + i);
-    }
-
-    void print_room() const {
-        std::cout << name << " - " << description << "\n\n";
-
-        std::cout << "You see the following NPCS:\n\t";
-
-        int tmp = 0;
-        while (tmp < room_npcs.size()) {
-            std::cout << "- " << room_npcs[tmp].get_name() << "\n\t";
-            tmp++;
-        }
-        std::cout << "\n";
-
-        std::cout << "You see the following items:\n\t";
-        tmp = 0;
-        while (tmp < room_items.size()) {
-            std::cout << "- " << room_items[tmp].get_name() << "\n\t";
-            tmp++;
-        }
-        std::cout << "\n";
-    }
-
-private:
-    std::string name;
-    std::string description;
-    bool visited;
-    std::vector<NPC> room_npcs;
-    std::vector<Item> room_items;
-};
 
 class Game {
 public:
