@@ -272,43 +272,76 @@ public:
     }
     
     static void show_help(std::vector<std::string> tokens){
-        std::cout << "You needed help?\n\n";
+        std::cout << "These are the commands you may use\n\n";
+        std::cout << "\"help\"\n";
+
+        std::cout << "\"take\" or ";
+        std::cout << "\"grab\"\n";
+
+        std::cout << "\"talk\" or ";
+        std::cout << "\"speak\" or ";
+        std::cout << "\"meet\"\n";
+
+        std::cout << "\"room\" or ";
+        std::cout << "\"place\" or ";
+        std::cout << "\"info\"\n";
+
+        std::cout << "\"items\" or ";
+        std::cout << "\"inventory\"\n";
+
+        std::cout << "\"travel\" or ";
+        std::cout << "\"go\" or ";
+        std::cout << "\"walk\" or ";
+        std::cout << "\"visit\"\n";
+
+        std::cout << "\"feed\"\n";
+
+        std::cout << "\"tp\" or ";
+        std::cout << "\"teleport\"\n";
+
+        std::cout << "\"quit\" or ";
+        std::cout << "\"exit\"\n\n";
     }
 
     void pick_up(std::vector<std::string> tokens) {
-    if (tokens.empty()) {
-        std::cout << "What will you pick up?\n\n";
-    } 
-    else {
-        for (auto word : tokens) {
-            for (size_t i = 0; i < current_location.get_room_items().size(); ++i) {
-                auto& item = current_location.get_room_items()[i];
-                if (item.get_name() == word) {
-                    if(item.get_weight() + get_player_weight() < 100){
-                        player_items.push_back(item);
-                        std::cout << "You picked up " << item.get_name() << "!\n\n";
-                        current_location.remove_room_item(i);
-                        set_player_weight(get_player_weight() + item.get_weight());
+        bool found = false;
+        if (tokens.empty()) {
+            std::cout << "What will you pick up?\n\n";
+        } 
+        else {
+            for (auto word : tokens) {
+                for (size_t i = 0; i < current_location.get_room_items().size(); ++i) {
+                    auto& item = current_location.get_room_items()[i];
+                    if (item.get_name() == word) {
+                        if(item.get_weight() + get_player_weight() < 100){
+                            found = true;
+                            player_items.push_back(item);
+                            std::cout << "You picked up " << item.get_name() << "!\n\n";
+                            current_location.remove_room_item(i);
+                            set_player_weight(get_player_weight() + item.get_weight());
 
-                        // Update the corresponding location in all_locations
-                        for (auto& loc : all_locations) {
-                            if (loc.get_room_num() == current_location.get_room_num()) {
-                                loc = current_location;
-                                break;
+                            // Update the corresponding location in all_locations
+                            for (auto& loc : all_locations) {
+                                if (loc.get_room_num() == current_location.get_room_num()) {
+                                    loc = current_location;
+                                    break;
+                                }
                             }
                         }
+                        else{
+                            std::cout << "You cannot pick this up now, feed the Zorg first.\n";
+                            std::cout << item.get_weight() + get_player_weight();
+                        }
+                        
+                        break;
                     }
-                    else{
-                        std::cout << "You cannot pick this up now, feed the Zorg first.\n";
-                        std::cout << item.get_weight() + get_player_weight();
-                    }
-                    
-                    break;
                 }
             }
         }
-    }
-    std::cout << "There are no items that match that description here.\n\n";
+        if (found == false){
+            std::cout << "There are no items that match that description here.\n\n";
+        }
+        
 }
 
     void room(std::vector<std::string> tokens){
@@ -389,25 +422,86 @@ public:
         }
     }
 
-        void quit(std::vector<std::string> tokens){
+    void feed(std::vector<std::string> tokens){
+        if (get_current_location()->get_name() == "Woods"){
+            for (auto& item : player_items){
+                    set_calories_left(get_calories_left() - item.get_calories());
+
+        }
+            if (get_calories_left() < 0){
+                set_game_status(false);
+                std::cout << "Congrats! You are the hero of Grand Valley!\n"; 
+                std::cout << "The Zorg is full and he saved the world, thanks to you!\n"; 
+                std::cout << "Good things are coming your way!\n"; 
+                std::cout << "Take it easy hero!\n\n"; 
+            }
+            else{
+                 std::cout << "You fed the Zorg! He needs " << get_calories_left() << " more calories!\n\n";
+                set_player_weight(0);
+                set_player_items({});
+            }
+           
+
+        }
+        else{
+            std::cout << "You must be in the Woods to feed the Zorg!\n\n";
+        }
+            
+    }
+
+    void tp(std::vector<std::string> tokens) {
+        std::cout << "You teleported from " << get_current_location()->get_name();
+        set_current_location(random_location());
+        std::cout << " to " << get_current_location()->get_name() << "!\n\n";
+    }
+
+    void kill(std::vector<std::string> tokens) {
+        if (get_current_location()->get_name() == "Woods"){
             set_game_status(false);
-            std::cout << "\n\nPlease play again!\n\n";
+            std::cout << "You moron! You killed the Zorg! Your world is doomed!\n\n";
+        }
+        else{
+            std::cout << "Why would you want to kill anything, let alone the Zorg? You're not even in the woods anyway.\n\n";
+        }
+    
+    }
+
+
+    void quit(std::vector<std::string> tokens){
+        set_game_status(false);
+        std::cout << "\n\nPlease play again!\n\n";
 
     }
 
     void setup_commands(){
         commands["help"] = show_help;
+
         commands["take"] = [this](std::vector<std::string> tokens) { this->pick_up(tokens); };
         commands["grab"] = [this](std::vector<std::string> tokens) { this->pick_up(tokens); };
+
         commands["talk"] = [this](std::vector<std::string> tokens) { this->talk(tokens); };
         commands["speak"] = [this](std::vector<std::string> tokens) { this->talk(tokens); };
         commands["meet"] = [this](std::vector<std::string> tokens) { this->meet(tokens); };
+
         commands["room"] = [this](std::vector<std::string> tokens) { this->room(tokens); };
+        commands["place"] = [this](std::vector<std::string> tokens) { this->room(tokens); };
+        commands["info"] = [this](std::vector<std::string> tokens) { this->room(tokens); };
+
         commands["items"] = [this](std::vector<std::string> tokens) { this->items(tokens); };
+        commands["inventory"] = [this](std::vector<std::string> tokens) { this->items(tokens); };
+
         commands["travel"] = [this](std::vector<std::string> tokens) { this->travel(tokens); };
         commands["go"] = [this](std::vector<std::string> tokens) { this->travel(tokens); };
         commands["walk"] = [this](std::vector<std::string> tokens) { this->travel(tokens); };
         commands["visit"] = [this](std::vector<std::string> tokens) { this->travel(tokens); };
+
+        commands["feed"] = [this](std::vector<std::string> tokens) { this->feed(tokens); };
+
+        commands["tp"] = [this](std::vector<std::string> tokens) { this->tp(tokens); };
+        commands["teleport"] = [this](std::vector<std::string> tokens) { this->tp(tokens); };
+
+        commands["kill"] = [this](std::vector<std::string> tokens) { this->kill(tokens); };
+
         commands["quit"] = [this](std::vector<std::string> tokens) { this->quit(tokens); };
         commands["exit"] = [this](std::vector<std::string> tokens) { this->quit(tokens); };
     }
