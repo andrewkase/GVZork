@@ -1,3 +1,9 @@
+/*
+Vinny Nittolo and Andrew Kase
+Prof. Woodring
+CIS 343-01
+*/
+
 #ifndef __H__CLASSES__
 #define __H__CLASSES__
 
@@ -9,6 +15,7 @@
 #include <ctime> // for time()
 #include <functional>
 
+//defines the input class
 class Input{
 public:
     std::string command_input;
@@ -20,7 +27,7 @@ private:
 };
 
 
-
+//defines the item class
 class Item {
 public:
     Item(std::string n = "", int c = 0, float w = 0.0, std::string d = "");
@@ -44,7 +51,7 @@ private:
     int calories;
 };
 
-
+//defines the NPC class
 class NPC {
 public:
     NPC(std::string n = "", std::string d = "", int m_n = 0, std::vector<std::string> m = {});
@@ -69,7 +76,7 @@ private:
 };
 
 
-
+//defines the Location class
 class Location {
 public:
     std::vector<Location> neighbors;
@@ -107,7 +114,7 @@ private:
     //std::vector<Location> neighbors; // List of neighboring locations
 };
 
-
+//defines the Game class
 class Game {
 public:
     std::map<std::string, std::function<void(std::vector<std::string>)>> commands;
