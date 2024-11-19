@@ -1,3 +1,9 @@
+/*
+Vinny Nittolo and Andrew Kase
+Prof. Woodring
+CIS 343-01
+*/
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,8 +14,10 @@
 
 #include "classes.hpp"
 
+//class constructor for Input
 Input::Input() {}
 
+//function to split user input
 std::vector<std::string> Input::split(int i) {
     std::string command_input_2;
     std::string first;
@@ -19,33 +27,34 @@ std::vector<std::string> Input::split(int i) {
         getline(std::cin, command_input);
     }
     
+    //iterate over the input and split by spaces
     for (int i = 0; i < command_input.length(); i++) { 
 
-    if (command_input[i] != ' '){
-        if (word_count == 0){
-            first += command_input[i];
+        if (command_input[i] != ' '){
+            if (word_count == 0){
+                first += command_input[i];
+            }
+            command_input_2 += command_input[i];
         }
-        command_input_2 += command_input[i];
-    }
-    if (command_input[i] == ' ' || i == command_input.length()-1){
-        if (word_count != 0){
-            rest_of_input.push_back(command_input_2);
+        if (command_input[i] == ' ' || i == command_input.length()-1){
+            if (word_count != 0){
+                rest_of_input.push_back(command_input_2);
+            }
+            word_count += 1;
+            command_input_2 = "";
         }
-        word_count += 1;
-        command_input_2 = "";
+        }
+        if (i == 1){
+            return {first};
+        }
+        else if (i == 2){
+            return rest_of_input;
+        }
+        return {};  // Return an empty vector if neither condition is met
     }
-    }
-    if (i == 1){
-        return {first};
-    }
-    else if (i == 2){
-        return rest_of_input;
-    }
-    return {};  // Return an empty vector if neither condition is met
-}
 
 
-
+//Constructor for item class
 Item::Item(std::string n, int c, float w, std::string d)
     : name(n), calories(c), weight(w), description(d) {}
 
@@ -66,7 +75,7 @@ std::string Item::get_description() const {
     return description;
 }
 
-// Setters
+// Setters with exception handling
 void Item::set_name(const std::string& n) {
     try {
         if (n.empty()) {
@@ -114,7 +123,7 @@ void Item::set_description(const std::string& d) {
 
 
 
-
+//constructor for NPC class
 NPC::NPC(std::string n, std::string d, int m_n, std::vector<std::string> m)
     : name(n), description(d), message_number(m_n), messages(m) {}
 
@@ -162,67 +171,58 @@ void NPC::set_messages(const std::vector<std::string>& m) {
 
 
 
-
+//Constructor for Location class
 Location::Location(std::string n, std::string d, bool v, 
                    std::vector<NPC> N, std::vector<Item> I, int r_n)
     : name(n), description(d), visited(v), room_npcs(N), room_items(I), room_num(r_n) {}
 
-// Getter for the location's name
+// Getters
 std::string Location::get_name() const {
     return name;
 }
 
-// Getter for the location's description
 std::string Location::get_description() const {
     return description;
 }
 
-// Getter for whether the location has been visited
 bool Location::is_visited() const {
     return visited;
 }
 
-// Getter for the room's NPCs
 std::vector<NPC>& Location::get_room_npcs() {
     return room_npcs;
 }
 
-// Getter for the room's items
 std::vector<Item>& Location::get_room_items() {
     return room_items;
 }
 
-// Getter for the room's number
 int Location::get_room_num() const {
     return room_num;
 }
 
-// Setter for the location's name
+
+//Setters
 void Location::set_name(const std::string& n) {
     name = n;
 }
 
-// Setter for the location's number
 void Location::set_room_num(int n) {
     room_num = n;
 }
 
-// Setter for the location's description
 void Location::set_description(const std::string& d) {
     description = d;
 }
 
-// Setter for whether the location has been visited
 void Location::set_visited(bool v) {
     visited = v;
 }
 
-// Setter for the NPCs in the room
 void Location::set_room_npcs(const std::vector<NPC>& N) {
     room_npcs = N;
 }
 
-// Setter for the items in the room
 void Location::set_room_items(const std::vector<Item>& I) {
     room_items = I;
 }
@@ -266,17 +266,17 @@ void Location::print_room() const {
 
 
 
-
+//Constructor for the game class as well as gameplay logic
 Game::Game() {
-    create_world();
+    create_world();  //initialize the world and its locations
     player_weight = 0.0;
-    current_location = random_location();
+    current_location = random_location(); //set a random starting location
     calories_left = 500;
     game_status = true;
-    setup_commands();
+    setup_commands(); //set up the commands for the game
 }
     
-    
+//list of commands the user has
 void Game::show_help(std::vector<std::string> tokens){
     std::cout << "These are the commands you may use\n\n";
     std::cout << "\"help\"\n";
@@ -309,6 +309,7 @@ void Game::show_help(std::vector<std::string> tokens){
     std::cout << "\"exit\"\n\n";
 }
 
+//function that allows the user to pick up items
 void Game::pick_up(std::vector<std::string> tokens) {
 bool found = false;
     if (tokens.empty()) {
@@ -319,6 +320,8 @@ bool found = false;
             for (size_t i = 0; i < current_location.get_room_items().size(); ++i) {
                 auto& item = current_location.get_room_items()[i];
                 if (item.get_name() == word) {
+
+                    //checks if the user is capable of carrying more weight
                     if(item.get_weight() + get_player_weight() < 100){
                         found = true;
                         player_items.push_back(item);
@@ -344,16 +347,19 @@ bool found = false;
             }
         }
     }
+    //handles user error
     if (found == false){
         std::cout << "There are no items that match that description here.\n\n";
     }
 }
 
+//prints the contents of the current room
 void Game::room(std::vector<std::string> tokens){
     current_location.print_room();
 
 }
 
+//lists all items the user currently holds
 void Game::items(std::vector<std::string> tokens){
         std::cout << "All items: ";
         for (auto item : player_items){
@@ -363,7 +369,7 @@ void Game::items(std::vector<std::string> tokens){
         std::cout << "\nTotal weight: " << get_player_weight() << "\n\n";
 }
 
-
+//allows the user to engage with the NPC's
 void Game::talk(std::vector<std::string> tokens){
     if (tokens.empty()){
         std::cout << "Who will you talk to?\n\n";
@@ -371,6 +377,8 @@ void Game::talk(std::vector<std::string> tokens){
     else{
         for (auto word : tokens){
             int temp = 0;
+
+            //receive a custom message depending on who the user is talking to
             for (auto& npc : current_location.get_room_npcs()){
                 if (npc.get_name() == word) {
                     NPC* temperary = &current_location.get_room_npcs()[temp];
@@ -384,6 +392,7 @@ void Game::talk(std::vector<std::string> tokens){
     }
 }
 
+//function to displau the name and description of the NPC you are dealing with
 void Game::meet(std::vector<std::string> tokens){
     if (tokens.empty()){
         std::cout << "Who do you want to meet?\n\n";
@@ -403,6 +412,7 @@ void Game::meet(std::vector<std::string> tokens){
     }
 }
 
+//function that allows the user to change locations
 void Game::travel(std::vector<std::string> tokens) {
     if (tokens.empty()) {
         std::cout << "Where will you go?\n\n";
@@ -427,12 +437,14 @@ void Game::travel(std::vector<std::string> tokens) {
     }
 }
 
+//command where the user is able to stop the program
 void Game::quit(std::vector<std::string> tokens){
     set_game_status(false);
     std::cout << "\n\nPlease play again!\n\n";
 
 }
 
+//this function sets up all of the commands that can be used by the user and where to go in the event one of them is typed
 void Game::setup_commands(){
     commands["help"] = show_help;
     commands["take"] = [this](std::vector<std::string> tokens) { this->pick_up(tokens); };
@@ -450,6 +462,7 @@ void Game::setup_commands(){
     commands["exit"] = [this](std::vector<std::string> tokens) { this->quit(tokens); };
 }
 
+//Creates all of the classes necessary for the user able to play the games
 void Game::create_world() {
     //Created Items
     Item chinese("Chinese", 50, 5.3, "Muy delicioso! Oops wrong food.");
@@ -490,7 +503,7 @@ void Game::create_world() {
 
     Location woods("Woods", "Home of the Ork.", true, {zorg}, {}, 8);
     
-
+    //sets up the neighbors/locations the user will be able to travel to from these spots
     kirkhof.neighbors.push_back(mackinac);
     kirkhof.neighbors.push_back(woods);
 
@@ -529,6 +542,7 @@ void Game::create_world() {
     all_locations.push_back(woods);
 }
 
+//function that sets up the spawn point for the player
 Location Game::random_location() {
     int random = rand() % all_locations.size();
     return all_locations[random];
@@ -596,7 +610,7 @@ void Game::set_game_status(bool b) {
 
 
 
-
+//main loop to run all of the code listed above
 int main() {
     srand(time(0)); // Seed the random number generator
     Game gamer;
@@ -604,9 +618,12 @@ int main() {
     std::string command;
     Input user_response;
 
+    //initial output for start of the game
     std::cout << "You are the chosen one! You must feed the Zorg enough food for him to save the world!\n";
     std::cout << "This is all I can tell you as of now, as I have a dentist appointment soon. Good Luck.\n";
     std::cout << "For list of commands, type \"help\".\n\n";
+
+    //keeps the game going until user input is quit
     while (gamer.get_game_status() == true){
         command = user_response.split(1)[0];
         tokens = user_response.split(2);
@@ -620,5 +637,3 @@ int main() {
     }
     
     return 0;
-}
-
